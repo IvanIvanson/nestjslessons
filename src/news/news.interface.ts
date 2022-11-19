@@ -1,22 +1,14 @@
-/* eslint-disable prettier/prettier */
+import { Comment } from './comments/comments.interface';
 export interface News {
   id: string | number;
   title: string;
   description: string;
-  author?: string;
-  createdAt: Date;
+  author: string;
   countView?: number;
+  cover?: string;
+  comments?: Comment[];
 }
+
 export type AllNews = Record<string | number, News>;
-// export type NewsCreate = Record<string | number, News>;
 
 export type NewsEdit = Partial<Omit<News, 'id'>>;
-
-// export interface NewsEdit {
-//   id?: number;
-//   title?: string;
-//   description?: string;
-//   author?: string;
-//   createdAt?: Date;
-//   countView?: number;
-// }

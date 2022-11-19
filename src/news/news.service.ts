@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { News, AllNews, NewsEdit } from './news.interface';
 // import { CreateNewsDto } from './create.news.dto';
 
-function getRandomInt(min: number, max: number): number {
+export function getRandomInt(min: number, max: number): number {
   min = Math.ceil(min);
   max = Math.floor(max);
 
@@ -15,10 +15,10 @@ export class NewsService {
     1: {
       id: 1,
       title: 'Наша первая новость',
-      description: 'Уррааа! Наша первая новость',
+      description: 'Описание первой новости',
       author: 'Ivan',
-      createdAt: new Date(),
       countView: 12,
+      cover: 'https://scientificrussia.ru/images/b/teb-full.jpg',
     },
   };
 
