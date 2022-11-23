@@ -1,5 +1,5 @@
 // import { renderComments } from './news-all';
-import { Comment } from './../../comments/comments.interface';
+import { Comment } from '../../news/comments/comments.interface';
 import { AllNews, News } from 'src/news/news.interface';
 
 export const renderNewsAll = (news: AllNews): string => {
@@ -45,8 +45,12 @@ export const renderNewsBlock = (news: News) => {
              <img src=${news.cover} class="card-img-top img-fluid" alt="cat" />
             <div class="card-body">
                 <h5 class="card-title text-center text-primary">${news.title}</h5>
-                <h6 class="card-subtitle mb-2 text-muted text-warning">${news.author}</h6>
-                <p class="card-text text-info">${news.description}</p>
+               
+                <div style="display:flex;justify-content:space-between;align-items:center; width:20%;">
+  <img src=${news.avatar} class="rounded img-fluid" style="width:70px;" alt="avatar" />
+                 <h6 class="card-subtitle mb-2 text-muted text-warning">${news.author}</h6>
+                </div>
+               <p class="card-text text-info">${news.description}</p>
                  
             </div>
         </div>

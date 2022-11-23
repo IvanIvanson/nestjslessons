@@ -1,7 +1,16 @@
 import { CommentsService } from './comments.service';
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { Comment, Comments } from './comments.interface';
-
+import { CreateCommentDto } from './dto/create.comment.dto';
+import { EditCommentDto } from './dto/edit.comment.dto';
 @Controller('comments')
 export class CommentsController {
   constructor(private readonly commentService: CommentsService) {}
@@ -13,7 +22,7 @@ export class CommentsController {
   @Post('/:newsid')
   create(
     @Param('newsid') newsId: string | number,
-    @Body() comment: Comments | Comment,
+    @Body() comment: Comments | Comment | CreateCommentDto,
   ) {
     return newFunction();
 
@@ -27,5 +36,14 @@ export class CommentsController {
     @Param('commentId') commentId: string | number,
   ) {
     return this.commentService.remove(newsId, commentId);
+  }
+
+  @Patch('/:newsId/:commentId')
+  edit(
+    @Param('newsId') newsId: string | number,
+    @Param('commentId') commentId: string | number,
+    @Body() comment: EditCommentDto,
+  ) {
+    return this.commentService.edit(newsId, commentId, comment);
   }
 }

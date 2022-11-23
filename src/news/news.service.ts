@@ -19,6 +19,8 @@ export class NewsService {
       author: 'Ivan',
       countView: 12,
       cover: 'https://scientificrussia.ru/images/b/teb-full.jpg',
+      avatar:
+        'https://kartinkof.club/uploads/posts/2022-05/1653683364_1-kartinkof-club-p-veselie-kartinki-na-avatarku-vatsap-1.jpg',
     },
   };
 
