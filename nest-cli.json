@@ -3,6 +3,9 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions":{
+     "assets": [
+      "mail/templates/**/*"
+    ],
     "plugins": [
       {
       "name": "@nestjs/swagger",
@@ -11,6 +14,7 @@
         "introspectComments": true
       }
       }
-    ] 
+    ],
+      "watchAssets": true
   }
 }
