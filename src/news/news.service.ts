@@ -1,6 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { News, AllNews, NewsEdit } from './news.interface';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { NewsEntity } from './news.entity';
+import { CreateNewsDto } from './create.news.dto';
 // import { CreateNewsDto } from './create.news.dto';
+
+
+
 
 export function getRandomInt(min: number, max: number): number {
   min = Math.ceil(min);
@@ -11,6 +18,55 @@ export function getRandomInt(min: number, max: number): number {
 
 @Injectable()
 export class NewsService {
+  usersService: any;
+  constructor(
+    @InjectRepository(NewsEntity)
+    private readonly newsRepository: Repository<NewsEntity>,
+) {}
+   async create(news: CreateNewsDto, userId: number): Promise<NewsEntity> {
+    const newsEntity = new NewsEntity();
+    newsEntity.title = news.title;
+    newsEntity.description = news.description;
+    newsEntity.cover = news.cover;
+    const _user = await this.usersService.findById(userId);
+    newsEntity.user = _user;
+    return this.newsRepository.save(newsEntity);
+  }
+
+  findById(id: News['id']): Promise<NewsEntity> {
+    return this.newsRepository.findOne(
+      { id },
+      { relations: ['user', 'comments', 'comments.user'] },
+    );
+  }
+
+  getAll(): Promise<NewsEntity[]> {
+    return this.newsRepository.find({});
+  }
+
+  async edit(id: number, news: NewsEdit): Promise<NewsEntity | null> {
+    const editableNews = await this.findById(id);
+    if (editableNews) {
+      const newsEntity = new NewsEntity();
+      newsEntity.title = news.title || editableNews.title;
+      newsEntity.description = news.description || editableNews.description;
+      newsEntity.cover = news.cover || editableNews.cover;
+
+      return this.newsRepository.save(newsEntity);
+    }
+    return null;
+  }
+
+  async remove(id): Promise<NewsEntity | null> {
+    const removeNews = await this.findById(id);
+    if (removeNews) {
+      return this.newsRepository.remove(removeNews);
+    }
+    return null;
+  }
+}
+
+
   private readonly news: AllNews = {
     1: {
       id: 1,
@@ -66,4 +122,16 @@ export class NewsService {
 
     return 'News not found!';
   }
+
+function getAllNews() {
+  throw new Error('Function not implemented.');
 }
+
+function remove(id: any, arg1: number) {
+  throw new Error('Function not implemented.');
+}
+
+function edit(id: any, arg1: number, newsEdit: any, NewsEdit: any) {
+  throw new Error('Function not implemented.');
+}
+

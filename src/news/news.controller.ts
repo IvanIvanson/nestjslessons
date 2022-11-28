@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -19,12 +21,16 @@ import { renderNewsDetail } from '../view/news/news-detail';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { HelperFileLoad } from '../utils/HelperFileLoad';
+import { NewsEntity } from './news.entity';
 
 const PATH_NEWS = '/static/';
 HelperFileLoad.path = PATH_NEWS;
 
 @Controller('news')
 export class NewsController {
+  usersService: any;
+  categoriesService: any;
+  mailService: any;
   constructor(
     private readonly newsService: NewsService,
     private readonly commentsService: CommentsService,
@@ -75,17 +81,44 @@ export class NewsController {
       }),
     }),
   )
-  create(
-    @Body() news: CreateNewsDto,
+  async create(
+    @Body() news: NewsCreateDto,
     @UploadedFile() cover: Express.Multer.File,
-    @UploadedFile() avatar: Express.Multer.File,
-  ) {
+) {
+// Поиск пользователя по его ID
+    const _user = await this.usersService.findById(news.authorId);
+    if (!_user) {
+      throw new HttpException(
+        'Не существует такого автора',
+        HttpStatus.BAD_REQUEST,
+);
+}
+// Поиск категории по её ID
+    const _category = await this.categoriesService.findById(news.categoryId);
+    if (!_category) {
+      throw new HttpException(
+        'Не существует такой категории',
+        HttpStatus.BAD_REQUEST,
+);
+}
+    const _newsEntity = new NewsEntity();
     if (cover?.filename) {
-      news.cover = PATH_NEWS + cover.filename;
-      news.avatar = PATH_NEWS + avatar.filename;
-    }
-    return this.newsService.create(news);
-  }
+      _newsEntity.cover = PATH_NEWS + cover.filename;
+}
+    _newsEntity.title = news.title;
+    _newsEntity.description = news.description;
+// Добавление пользователя в связь
+    _newsEntity.user = _user;
+// Добавление категории в связь
+    _newsEntity.category = _category;
+    const _news = await this.newsService.create(_newsEntity);
+    await this.mailService.sendNewNewsForAdmins(
+['ivan@yandex.ru', 'ivan@gmail.com'],
+      _news,
+);
+    return _news;
+}
+
 
   // create(@Body() createNewsDto: News) {
   //   return this.newsService.create(createNewsDto);
@@ -102,4 +135,5 @@ export class NewsController {
 
     return isRemoved ? 'Новость удалена' : 'Передан неверный идентификатор';
   }
+
 }

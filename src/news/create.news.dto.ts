@@ -23,4 +23,5 @@ export class CreateNewsDto {
   @IsOptional()
   // eslint-disable-next-line prettier/prettier
   countView?: string;
+  cover: string;
 }
